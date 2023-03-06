@@ -8,14 +8,15 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.newsapp.databinding.FragmentSavedNewsBinding
+import com.example.newsapp.ui.activity.NewsActivity
+import com.example.newsapp.ui.viewmodel.NewsViewModel
 
 class SavedNewsFragment : Fragment() {
 
     private var _binding: FragmentSavedNewsBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+
+    lateinit var viewModel: NewsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,9 +26,14 @@ class SavedNewsFragment : Fragment() {
 
         _binding = FragmentSavedNewsBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-        val textView: TextView = binding.textDashboard
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel = (activity as NewsActivity).viewModel
+
     }
 
     override fun onDestroyView() {
