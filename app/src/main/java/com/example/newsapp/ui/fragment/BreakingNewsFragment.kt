@@ -9,8 +9,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.newsapp.R
 import com.example.newsapp.adapters.NewsAdapter
 import com.example.newsapp.databinding.FragmentBreakingNewsBinding
 import com.example.newsapp.db.ArticleDatabase
@@ -44,10 +46,18 @@ class BreakingNewsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val newsRepository = NewsRepository(ArticleDatabase(requireActivity()))
-        val viewModelProviderFactory = NewsViewModelProviderFactory(newsRepository)
-        viewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
+        viewModel = (activity as NewsActivity).viewModel
         setUpRecyclerView()
+
+        newsAdapter.setOnItemClickListener { article ->
+            val bundle = Bundle().apply {
+                putSerializable("article", article)
+            }
+            findNavController().navigate(
+                R.id.action_breakingNewsFragment_to_articleFragment,
+                bundle
+            )
+        }
 
         viewModel.breakingNews.observe(viewLifecycleOwner, Observer { response ->
             when(response){
@@ -86,15 +96,6 @@ class BreakingNewsFragment : Fragment() {
         }
     }
 
-    private fun fillRecycler(list: MutableList<TestModel>) {
-        val linearlayoutManager = LinearLayoutManager(requireActivity())
-        binding.rvBreakingNews.apply {
-            layoutManager = linearlayoutManager
-            setHasFixedSize(true)
-            isFocusable = false
-            adapter = NewsAdapter()
-        }
-    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

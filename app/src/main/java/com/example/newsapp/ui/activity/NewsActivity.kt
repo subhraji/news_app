@@ -1,8 +1,10 @@
 package com.example.newsapp.ui.activity
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -19,27 +21,19 @@ import com.example.newsapp.ui.viewmodel.NewsViewModelProviderFactory
 
 class NewsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewsBinding
-    lateinit var viewModel: NewsViewModel
+
+    val viewModel: NewsViewModel by viewModels{
+        val newsRepository = NewsRepository(ArticleDatabase(this))
+        NewsViewModelProviderFactory(newsRepository)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        /*val newsRepository = NewsRepository(ArticleDatabase(this))
-        val viewModelProviderFactory = NewsViewModelProviderFactory(newsRepository)
-        viewModel = ViewModelProvider(this,viewModelProviderFactory).get(NewsViewModel::class.java)
-
-        val navController = findNavController(R.id.nav_host_fragment)
-        binding.navView.setupWithNavController(navController)*/
-
-
-        val newsRepository = NewsRepository(ArticleDatabase(this))
-        val viewModelProviderFactory = NewsViewModelProviderFactory(newsRepository)
-        viewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
-
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        binding.navView.setupWithNavController(navHostFragment.findNavController())
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
+        binding.bottomNavigationView.setupWithNavController(navHostFragment.findNavController())
 
     }
 }
