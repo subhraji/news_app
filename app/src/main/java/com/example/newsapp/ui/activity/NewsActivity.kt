@@ -24,7 +24,7 @@ class NewsActivity : AppCompatActivity() {
 
     val viewModel: NewsViewModel by viewModels{
         val newsRepository = NewsRepository(ArticleDatabase(this))
-        NewsViewModelProviderFactory(newsRepository)
+        NewsViewModelProviderFactory(application, newsRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
